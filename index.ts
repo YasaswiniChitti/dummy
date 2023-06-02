@@ -4,16 +4,15 @@ import usersRoute from "./routes/users";
 import cors from "cors";
 import mongoose, { connection, connect } from "mongoose";
 import jwt from "jsonwebtoken";
-// import User from "./model/user";
+import User from "./model/user";
 import bcrypt, { compare } from "bcryptjs";
 
 dotenv.config();
 
 const app: Express = express();
-const User = require("./model/user");
 const DB_USER = process.env.DB_NAME;
 const PASSWORD = process.env.DB_PASSWORD;
-const url = `mongodb+srv://${DB_USER}:${PASSWORD}@cluster0.ugapn4q.mongodb.net/?retryWrites=true&w=majority/TestApi`;
+const url = `mongodb+srv://${DB_USER}:${PASSWORD}@cluster0.ugapn4q.mongodb.net/?retryWrites=true&w=majority`;
 connection
   .on("error", console.log)
   .on("disconnected", () => {
@@ -69,7 +68,7 @@ app.post("/register", async (req: Request, res: Response) => {
   if (await User.exists({ email: req.body.email })) {
     return res.status(400).json("This email address is already taken.");
   }
-  const user = await User({
+  const user = await User.create({
     name: req.body.name,
     email: req.body.email,
     password: bcrypt.hash(req.body.password, 10),
